@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from database.settings import get_session
 from schemas.comment import CommentCreate, CommentSchema, CommentAnalytics, CommentsRequest
 from models.user import User
@@ -69,6 +71,8 @@ async def get_comments_daily_breakdown(
     if not post_ids:
         return CommentAnalytics(date=str(request.date_from), total_comments=0, blocked_comments=0)
 
+    date_to = datetime.combine(request.date_to, datetime.max.time())
+
     result = await db.execute(
         select(
             func.date(Comment.created_at).label('date'),
@@ -78,7 +82,7 @@ async def get_comments_daily_breakdown(
         .where(
             Comment.post_id.in_(post_ids),
             Comment.created_at >= request.date_from,
-            Comment.created_at <= request.date_to,
+            Comment.created_at <= date_to,
         )
         .group_by(func.date(Comment.created_at))
         .order_by(func.date(Comment.created_at))
@@ -93,7 +97,6 @@ async def get_comments_daily_breakdown(
         blocked_comments += row.blocked_comments
 
     return CommentAnalytics(
-        date=date,
         total_comments=total_comments,
         blocked_comments=blocked_comments
     )

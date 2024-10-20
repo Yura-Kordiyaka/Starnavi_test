@@ -12,6 +12,11 @@ class DB_Settings(BaseSettings):
     DB_PASSWORD: str = os.environ.get('DB_PASSWORD')
     DB_NAME: str = os.environ.get('DB_NAME')
 
+    DB_TEST_HOST: str = os.environ.get('DB_TEST_HOST')
+    DB_TEST_PORT: int = os.environ.get('DB_TEST_PORT')
+    DB_TEST_USER: str = os.environ.get('DB_TEST_USER')
+    DB_TEST_PASSWORD: str = os.environ.get('DB_TEST_PASSWORD')
+    DB_TEST_NAME: str = os.environ.get('DB_TEST_NAME')
 
 
 

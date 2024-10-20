@@ -10,7 +10,7 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/test_app
+      - .:/app
     command:  bash -c "alembic upgrade head && uvicorn main:app --reload --host 0.0.0.0 --port 8000"
     ports:
       - '8000:8000'
@@ -30,6 +30,16 @@ services:
     ports:
       - '5433:5432'
 
+  test_db:
+    image: postgres:latest
+    container_name: test_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_TEST_USER}
+      POSTGRES_PASSWORD: ${DB_TEST_PASSWORD}
+      POSTGRES_DB: ${DB_TEST_NAME}
+    ports:
+      - '5434:5432'
 
   nginx:
     container_name: nginx
@@ -40,3 +50,17 @@ services:
       - '1715:80'
     depends_on:
       - backend
+
+  test:
+    container_name: test
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: pytest tests
+    depends_on:
+      - postgres
+      - test_db

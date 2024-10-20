@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
+
 from database.settings import get_session
 from schemas.user import UserCreateSchemas, UserResponseSchemas
 from services.user_auth import login_user, get_current_user
@@ -9,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 user_router = APIRouter(prefix="/user", tags=["user"])
 
 
-@user_router.post("/sign_up", response_model=UserResponseSchemas)
+@user_router.post("/sign_up", response_model=UserResponseSchemas,status_code=status.HTTP_201_CREATED)
 async def sign_up(user: UserCreateSchemas, db: AsyncSession = Depends(get_session)):
     user = await crud_user.create_user(db, user)
     return user

@@ -1,13 +1,13 @@
 FROM python:3.12
 
-WORKDIR /test_app
+WORKDIR /app
 
 RUN apt update && apt -qy upgrade
 
-COPY ../../requirements.txt test_app/requirements.txt
+COPY ../../requirements.txt app/requirements.txt
 
-RUN pip install -r test_app/requirements.txt
+RUN pip install -r app/requirements.txt
 
-COPY ../.. /test_app/
+COPY ../.. /app/
 
-WORKDIR /test_app/
+WORKDIR /app/
